@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block left %}
+<h2>Your Terrible SQL</h2>
+<form action='{{url_for("routes.fluff_results")}}' method="get">
+    <div class="form-group">
+        <textarea class="form-control text-monospace" name='sql' , id="user_sql" rows="20" required>{{sql}}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="sql_dialect">Dialect</label>
+        <select class="form-control" id="sql_dialect" name='dialect' required>
+            {% for d in all_dialects %}
+            <option value='{{d}}' {% if dialect and d == dialect %} selected=selected {% endif %}>
+                {{d}}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-2 btn-block">Help me.</button>
+</form>
+{% endblock %}
+
+{% block right %}
+{% if results %}
+<h2>Fluff's Fixed SQL</h2>
+<textarea class="form-control text-monospace" rows="20" readonly>{{fixed_sql}}</textarea>
+
+<hr>
+
+{% if lint_errors %}
+<div class="alert alert-danger" role="alert">
+    Hi! I found some errors for you to look at
+</div>
+
+<table class="table table-hover table-sm">
+    <thead>
+        <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Line / Position</th>
+            <th scope="col">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for violation in lint_errors[0].get('violations', []) %}
+        <tr>
+            <th scope="row">{{violation['code']}}</th>
+            <td>{{violation['line_no']}} / {{violation['line_pos']}}</td>
+            <td>{{violation['description']}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-success" role="alert">
+    No problems! Nice job friend.
+</div>
+
+{% endif %}
+{% endif %}
+
+
+
+
+
+{% endblock %}

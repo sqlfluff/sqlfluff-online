@@ -1,0 +1,96 @@
+<!doctype html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <!-- A two column layout -->
+    <div class="container">
+        <h1>&#127881 Sqlfluff Online &#127881</h1>
+
+        <p>
+            <a href='https://github.com/alanmcruickshank/sqlfluff'>Fluff</a> is a SQL formatter that I like a lot. I
+            built this app because I often want to format one-off,
+            adhoc sql that isn't even worth saving to a file.
+        </p>
+
+        <p>
+            The premise is simple: paste your SQL and select your dialect. Hit that button and find
+            your fixed SQL with the associated linter errors. Enjoy, friends &#127773.
+        </p>
+
+        <hr>
+
+        <div class="row">
+            <!-- user input -->
+            <div class="col-sm">
+                {% block left %}{% endblock %}
+            </div>
+
+            <div class="col-sm">
+                {% block right %}{% endblock %}
+            </div>
+        </div>
+
+        <hr>
+
+        <button class="btn btn btn-outline-dark btn-block" type="button" data-toggle="collapse" data-target="#more_info"
+            aria-expanded="false" aria-controls="collapseExample">
+            Click me for more info on this app
+        </button>
+
+        <hr>
+
+        <div class="collapse" id=more_info>
+            <p>
+                I am not the author of Sqlfluff. <a href='https://github.com/alanmcruickshank'>Alan</a> is, and many
+                other
+                contributors are (ok I opened a few PRs too). Alan never said anything like: "<i>Nolan, hack together
+                    an
+                    online tool that makes users feel bad about their code</i>". This is my
+                abomination and not his.
+            </p>
+            <p>
+                This runs on sqlfluff version {{sqlfluff_version}}. I apply all rules in that version. Here is a list of
+                them:
+            </p>
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Rule</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for code, rule in all_rules.items() %}
+                    <tr>
+                        <th scope="row">{{code}}</th>
+                        <td>{{rule['description']}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        body {
+            margin: 2em;
+            max-width: 1500px;
+        }
+
+    </style>
+</body>

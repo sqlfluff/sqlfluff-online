@@ -19,7 +19,6 @@ def ip_whitelist():
 def create_app():
     """App factory."""
     app = Flask(__name__)
-    app.config.from_pyfile("config.py")
 
     from . import routes
 

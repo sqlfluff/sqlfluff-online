@@ -1,1 +1,0 @@
-"""Set up app config."""

@@ -4,6 +4,7 @@ import json
 import pytest
 
 import app
+from app.routes import sql_encode
 
 
 @pytest.fixture
@@ -24,7 +25,8 @@ def test_home(client):
 
 def test_results(client):
     """Test that the results is good to go."""
-    sql = html.escape(("select * from table").replace(" ", "%20"))
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql}""")
+    sql_encoded = sql_encode("select * from table")
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
     assert b"Sqlfluff Online" in rv.data
     assert b"Fixed SQL" in rv.data
+    assert b"select * from table" in rv.data

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block left %}
 <h2>Your Terrible SQL</h2>
-<form action='{{url_for("routes.fluff_results")}}' method="get">
+<form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
         <textarea class="form-control text-monospace" name='sql' , id="user_sql" rows="20" required>{{sql}}</textarea>
     </div>

@@ -1,20 +1,46 @@
-from flask import Blueprint, render_template, request
+import base64
+import gzip
+
+from flask import Blueprint, redirect, render_template, request, url_for
 
 from .fluff import fix, lint
 
 bp = Blueprint("routes", __name__)
 
 
-@bp.route("/")
+def sql_encode(data: str) -> str:
+    """Gzip and base-64 encode a string."""
+    return base64.urlsafe_b64encode(gzip.compress(data.encode())).decode()
+
+
+def sql_decode(data: str) -> str:
+    """Gzip and base-64 decode a string."""
+    return gzip.decompress(base64.urlsafe_b64decode(data.encode())).decode()
+
+
+@bp.route("/", methods=["GET", "POST"])
 def home():
     """The main page."""
-    return render_template("index.html", result=False)
+    if request.method == "GET":
+        return render_template("index.html", result=False)
+
+    # if there is post data, we have the form and need to encode the SQL
+    # to pass to the results route.
+    #
+    # this encoding dance is to protect against the possibility of getting a very
+    # long SQL string that breaks something in HTTP get.
+    sql = request.form["sql"]
+    dialect = request.form["dialect"]
+    return redirect(
+        url_for("routes.fluff_results", sql=sql_encode(sql), dialect=dialect)
+    )
 
 
 @bp.route("/fluffed")
 def fluff_results():
-    """The results page."""
-    sql = request.args["sql"].strip() + "\n"
+    """Serve the results page."""
+    # decode the sql, add a newline to avoid the annoying newline-at-end-of-file error.
+    sql = sql_decode(request.args["sql"]).strip() + "\n"
     dialect = request.args["dialect"]
 
     return render_template(

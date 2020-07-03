@@ -7,3 +7,28 @@ I built this app because I often want to format one-off, adhoc sql that isn't ev
 
 You can use the application on [Heroku](https://sqlfluff-online.herokuapp.com/).
 
+## Development
+
+Set up a python (3.8) environment:
+
+```sh
+$ pip install -r requirements-dev.txt
+```
+
+Run the app locally:
+
+```sh
+$ flask run
+```
+
+Lint and run unit tests:
+
+```sh
+$ tox
+```
+
+Run the production application:
+
+```sh
+$ python -m app.wsgi
+```

@@ -4,7 +4,9 @@
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
         <textarea class="form-control text-monospace" name='sql' , id="user_sql" maxlength="3000" rows="20"
-            required>{{sql}}</textarea>
+            onkeyup="textCounter(this, 'counter', 3000);" required>{{sql}}</textarea>
+        <small id="counter"></small>
+
     </div>
 
     <div class="form-group">
@@ -60,9 +62,17 @@
 
 {% endif %}
 {% endif %}
+{% endblock %}
 
+{% block scripts %}
 
-
-
+<script>
+    function textCounter(textarea, counterID, maxLimit) {
+        var countfield = document.getElementById(counterID);
+        var remaining = maxLimit - textarea.value.length
+        var txt = `${remaining} characters remaining.`
+        countfield.textContent = txt
+    }
+</script>
 
 {% endblock %}

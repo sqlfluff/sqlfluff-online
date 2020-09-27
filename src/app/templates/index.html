@@ -1,14 +1,5 @@
 {% extends 'base.html' %}
 {% block left %}
-<style>
-    #counter-container {
-        margin-top: .50rem;
-    }
-    #counter {
-        padding: .25rem .75rem;
-    }
-</style>
-
 <h2>Your Terrible SQL</h2>
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">

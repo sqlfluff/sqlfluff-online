@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 {% block left %}
+<style>
+    #counter-container {
+        margin-top: .50rem;
+    }
+    #counter {
+        padding: .25rem 0.75rem;
+    }
+</style>
+
 <h2>Your Terrible SQL</h2>
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
         <textarea class="form-control text-monospace" name='sql' data-editor="sql", id="user_sql" rows="20" required>{{sql}}</textarea>
-        <small id="counter"></small>
+        <div id="counter-container">
+            <small id="counter"></small>
+        </div>
 
     </div>
 
@@ -19,7 +30,7 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary mb-2 btn-block">Help me.</button>
+    <button type="submit" class="btn btn-primary mb-2 btn-block" id="submitButton">Help me.</button>
 </form>
 {% endblock %}
 
@@ -96,6 +107,14 @@
                 var remaining = maxLength - sql.length
                 var txt = `${remaining} characters remaining.`
                 document.getElementById('counter').textContent = txt
+
+                if (remaining < 0) {
+                    document.getElementById("submitButton").disabled = true
+                    document.getElementById('counter').className = 'alert alert-warning'
+                } else {
+                    document.getElementById("submitButton").disabled = false
+                    document.getElementById('counter').className = ''
+                }
             }
             
             // disable insert if limit is reached

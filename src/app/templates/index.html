@@ -3,7 +3,8 @@
 <h2>Your Terrible SQL</h2>
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
-        <textarea class="form-control text-monospace" name='sql' data-editor="sql", id="user_sql" rows="20" required>{{sql}}</textarea>
+        <textarea class="form-control text-monospace" name='sql' data-editor="sql" , id="user_sql"
+            rows="20">{{sql}}</textarea>
         <div id="counter-container">
             <small id="counter"></small>
         </div>
@@ -69,12 +70,12 @@
 
 <script>
     // hook up ACE editor to all textareas with data-editor attribute
-    $(function() {
-        $('textarea[data-editor]').each(function() {
+    $(function () {
+        $('textarea[data-editor]').each(function () {
             var textarea = $(this);
             var mode = textarea.data('editor');
             var editDiv = $(
-                '<div>', 
+                '<div>',
                 {
                     position: 'absolute',
                     width: textarea.width(),
@@ -83,7 +84,7 @@
                 }
             ).insertBefore(textarea);
             textarea.css('display', 'none');
-            
+
             var editor = ace.edit(editDiv[0]);
             editor.renderer.setShowGutter(true);
             editor.getSession().setValue(textarea.val());
@@ -91,7 +92,7 @@
             editor.setTheme("ace/theme/chrome");
 
             var maxLength = 3000;
-            
+
             // update character counter on keyup
             editor.textInput.getElement().onkeyup = function () {
                 var sql = editor.session.getValue()
@@ -107,23 +108,23 @@
                     document.getElementById('counter').className = ''
                 }
             }
-            
+
             // disable insert if limit is reached
             var doc = editor.session.doc
             doc.applyAnyDelta = doc.applyAnyDelta || doc.applyDelta
-            doc.applyDelta = function(delta) {
+            doc.applyDelta = function (delta) {
                 if (delta.action == "insert" && this.$maxLength && this.getValue().length >= this.$maxLength) {
                     return false;
                 }
                 return this.applyAnyDelta(delta);
             }
             doc.$maxLength = maxLength
-            
+
             // copy back to textarea on form submit
-            textarea.closest('form').submit(function() {
+            textarea.closest('form').submit(function () {
                 textarea.val(editor.getSession().getValue());
             })
-                        
+
         });
     });
 </script>

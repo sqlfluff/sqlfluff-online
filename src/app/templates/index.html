@@ -3,9 +3,10 @@
 <h2>Your Terrible SQL</h2>
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
-        <textarea class="form-control text-monospace" name='sql' , id="user_sql" maxlength="3000" rows="20"
-            onkeyup="textCounter(this, 'counter', 3000);" required>{{sql}}</textarea>
-        <small id="counter"></small>
+        <textarea class="form-control text-monospace" name='sql' data-editor="sql", id="user_sql" rows="20" required>{{sql}}</textarea>
+        <div id="counter-container">
+            <small id="counter"></small>
+        </div>
 
     </div>
 
@@ -20,7 +21,7 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary mb-2 btn-block">Help me.</button>
+    <button type="submit" class="btn btn-primary mb-2 btn-block" id="submitButton">Help me.</button>
 </form>
 {% endblock %}
 
@@ -67,12 +68,64 @@
 {% block scripts %}
 
 <script>
-    function textCounter(textarea, counterID, maxLimit) {
-        var countfield = document.getElementById(counterID);
-        var remaining = maxLimit - textarea.value.length
-        var txt = `${remaining} characters remaining.`
-        countfield.textContent = txt
-    }
+    // hook up ACE editor to all textareas with data-editor attribute
+    $(function() {
+        $('textarea[data-editor]').each(function() {
+            var textarea = $(this);
+            var mode = textarea.data('editor');
+            var editDiv = $(
+                '<div>', 
+                {
+                    position: 'absolute',
+                    width: textarea.width(),
+                    height: textarea.height(),
+                    'class': textarea.attr('class')
+                }
+            ).insertBefore(textarea);
+            textarea.css('display', 'none');
+            
+            var editor = ace.edit(editDiv[0]);
+            editor.renderer.setShowGutter(true);
+            editor.getSession().setValue(textarea.val());
+            editor.getSession().setMode("ace/mode/" + mode);
+            editor.setTheme("ace/theme/chrome");
+
+            var maxLength = 3000;
+            
+            // update character counter on keyup
+            editor.textInput.getElement().onkeyup = function () {
+                var sql = editor.session.getValue()
+                var remaining = maxLength - sql.length
+                var txt = `${remaining} characters remaining.`
+                document.getElementById('counter').textContent = txt
+
+                if (remaining < 0) {
+                    document.getElementById("submitButton").disabled = true
+                    document.getElementById('counter').className = 'alert alert-warning'
+                } else {
+                    document.getElementById("submitButton").disabled = false
+                    document.getElementById('counter').className = ''
+                }
+            }
+            
+            // disable insert if limit is reached
+            var doc = editor.session.doc
+            doc.applyAnyDelta = doc.applyAnyDelta || doc.applyDelta
+            doc.applyDelta = function(delta) {
+                if (delta.action == "insert" && this.$maxLength && this.getValue().length >= this.$maxLength) {
+                    return false;
+                }
+                return this.applyAnyDelta(delta);
+            }
+            doc.$maxLength = maxLength
+            
+            // copy back to textarea on form submit
+            textarea.closest('form').submit(function() {
+                textarea.val(editor.getSession().getValue());
+            })
+                        
+        });
+    });
 </script>
 
 {% endblock %}

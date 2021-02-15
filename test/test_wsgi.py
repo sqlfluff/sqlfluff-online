@@ -13,4 +13,3 @@ def test_wsgi_app():
         resp = requests.get("http://localhost:5000")
         resp.raise_for_status()
         proc.kill()
-

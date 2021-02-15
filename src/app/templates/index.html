@@ -26,9 +26,10 @@
 </form>
 {% endblock %}
 
+
 {% block right %}
 {% if results %}
-<h2>Fluff's Fixed SQL</h2>
+<h2>SQLFluff's Fixed SQL</h2>
 <textarea class="form-control text-monospace" rows="20" readonly>{{fixed_sql}}</textarea>
 
 <hr>
@@ -66,8 +67,8 @@
 {% endif %}
 {% endblock %}
 
-{% block scripts %}
 
+{% block scripts %}
 <script>
     // hook up ACE editor to all textareas with data-editor attribute
     $(function () {
@@ -128,5 +129,4 @@
         });
     });
 </script>
-
 {% endblock %}

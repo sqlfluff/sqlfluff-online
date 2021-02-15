@@ -2,8 +2,7 @@ import base64
 import gzip
 
 from flask import Blueprint, redirect, render_template, request, url_for
-
-from .fluff import fix, lint
+from sqlfluff.api import fix, lint
 
 bp = Blueprint("routes", __name__)
 
@@ -20,7 +19,7 @@ def sql_decode(data: str) -> str:
 
 @bp.route("/", methods=["GET", "POST"])
 def home():
-    """The main page."""
+    """Render the main page."""
     if request.method == "GET":
         return render_template("index.html", result=False)
 
@@ -43,11 +42,18 @@ def fluff_results():
     sql = sql_decode(request.args["sql"]).strip() + "\n"
     dialect = request.args["dialect"]
 
+    # wrap this in try/except due to indexerror bug that was surfaced shortly after
+    # 0.4.0 release. On next version we can remove it.
+    try:
+        linted = lint(sql, dialect=dialect)
+    except IndexError:
+        linted = []
+
     return render_template(
         "index.html",
         results=True,
         sql=sql,
         dialect=dialect,
-        lint_errors=lint(sql, dialect=dialect),
+        lint_errors=linted,
         fixed_sql=fix(sql, dialect=dialect),
     )

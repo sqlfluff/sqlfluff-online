@@ -1,9 +1,7 @@
-import sqlfluff
+"""Init the applicaiton."""
 from flask import Flask, render_template, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
-from .fluff import VALID_DIALECTS, VALID_RULES
 
 limiter = Limiter(
     key_func=get_remote_address, default_limits=["2 per second", "1000 per day"]
@@ -20,7 +18,7 @@ def create_app():
     """App factory."""
     app = Flask(__name__)
 
-    from . import routes
+    from . import config, routes
 
     limiter.init_app(app)
     app.register_blueprint(routes.bp)
@@ -29,9 +27,9 @@ def create_app():
     def inject_vars():
         """Inject arbitrary data into all templates."""
         return dict(
-            all_rules=VALID_RULES,
-            all_dialects=VALID_DIALECTS,
-            sqlfluff_version=sqlfluff.__version__,
+            all_rules=config.VALID_RULES,
+            all_dialects=config.VALID_DIALECTS,
+            sqlfluff_version=config.SQLFLUFF_VERSION,
         )
 
     return app

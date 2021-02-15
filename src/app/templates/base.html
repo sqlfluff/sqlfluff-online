@@ -87,10 +87,10 @@
                 </thead>
                 <tbody>
 
-                    {% for code, rule in all_rules.items() %}
+                    {% for code, description in all_rules.items() %}
                     <tr>
                         <th scope="row">{{code}}</th>
-                        <td>{{rule['description']}}</td>
+                        <td>{{description}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -103,12 +103,15 @@
             margin: 2em;
             max-width: 1500px;
         }
+
         #counter-container {
             margin-top: .50rem;
         }
+
         #counter {
             padding: .25rem .75rem;
         }
+
     </style>
     {% block scripts %}{% endblock %}
 </body>

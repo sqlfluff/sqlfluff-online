@@ -15,7 +15,7 @@
         <label for="sql_dialect">Dialect</label>
         <select class="form-control" id="sql_dialect" name='dialect' required>
             {% for d in all_dialects %}
-            <option value='{{d}}' {% if dialect and d == dialect %} selected=selected {% endif %}>
+            <option value='{{d}}' {% if dialect and d==dialect %} selected=selected {% endif %}>
                 {{d}}
             </option>
             {% endfor %}
@@ -48,7 +48,7 @@
     </thead>
     <tbody>
 
-        {% for violation in lint_errors[0].get('violations', []) %}
+        {% for violation in lint_errors %}
         <tr>
             <th scope="row">{{violation['code']}}</th>
             <td>{{violation['line_no']}} / {{violation['line_pos']}}</td>

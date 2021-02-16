@@ -15,7 +15,7 @@
         <label for="sql_dialect">Dialect</label>
         <select class="form-control" id="sql_dialect" name='dialect' required>
             {% for d in all_dialects %}
-            <option value='{{d}}' {% if dialect and d == dialect %} selected=selected {% endif %}>
+            <option value='{{d}}' {% if dialect and d==dialect %} selected=selected {% endif %}>
                 {{d}}
             </option>
             {% endfor %}
@@ -26,9 +26,10 @@
 </form>
 {% endblock %}
 
+
 {% block right %}
 {% if results %}
-<h2>Fluff's Fixed SQL</h2>
+<h2>SQLFluff's Fixed SQL</h2>
 <textarea class="form-control text-monospace" rows="20" readonly>{{fixed_sql}}</textarea>
 
 <hr>
@@ -48,7 +49,7 @@
     </thead>
     <tbody>
 
-        {% for violation in lint_errors[0].get('violations', []) %}
+        {% for violation in lint_errors %}
         <tr>
             <th scope="row">{{violation['code']}}</th>
             <td>{{violation['line_no']}} / {{violation['line_pos']}}</td>
@@ -66,8 +67,8 @@
 {% endif %}
 {% endblock %}
 
-{% block scripts %}
 
+{% block scripts %}
 <script>
     // hook up ACE editor to all textareas with data-editor attribute
     $(function () {
@@ -128,5 +129,4 @@
         });
     });
 </script>
-
 {% endblock %}

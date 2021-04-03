@@ -29,6 +29,11 @@ def home():
     # this encoding dance is to protect against the possibility of getting a very
     # long SQL string that breaks something in HTTP get.
     sql = request.form["sql"]
+
+    # we get carriage returns from the form somehow. so split on them and join via
+    # regular newline.
+    sql = "\n".join(sql.splitlines())
+
     dialect = request.form["dialect"]
     return redirect(
         url_for("routes.fluff_results", sql=sql_encode(sql), dialect=dialect)

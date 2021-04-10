@@ -38,12 +38,10 @@ def home():
 @bp.route("/fluffed")
 def fluff_results():
     """Serve the results page."""
-    # decode the sql, add a newline to avoid the annoying newline-at-end-of-file error.
-    sql = sql_decode(request.args["sql"]).strip() + "\n"
-
     # we get carriage returns from the form somehow. so split on them and join via
-    # regular newline.
-    sql = "\n".join(sql.splitlines())
+    # regular newline. add a newline to avoid the annoying newline-at-end-of-file error.
+    sql = sql_decode(request.args["sql"]).strip()
+    sql = "\n".join(sql.splitlines()) + "\n"
 
     dialect = request.args["dialect"]
     linted = lint(sql, dialect=dialect)

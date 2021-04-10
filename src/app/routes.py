@@ -29,11 +29,6 @@ def home():
     # this encoding dance is to protect against the possibility of getting a very
     # long SQL string that breaks something in HTTP get.
     sql = request.form["sql"]
-
-    # we get carriage returns from the form somehow. so split on them and join via
-    # regular newline.
-    sql = "\n".join(sql.splitlines())
-
     dialect = request.form["dialect"]
     return redirect(
         url_for("routes.fluff_results", sql=sql_encode(sql), dialect=dialect)
@@ -43,16 +38,13 @@ def home():
 @bp.route("/fluffed")
 def fluff_results():
     """Serve the results page."""
-    # decode the sql, add a newline to avoid the annoying newline-at-end-of-file error.
-    sql = sql_decode(request.args["sql"]).strip() + "\n"
-    dialect = request.args["dialect"]
+    # we get carriage returns from the form somehow. so split on them and join via
+    # regular newline. add a newline to avoid the annoying newline-at-end-of-file error.
+    sql = sql_decode(request.args["sql"]).strip()
+    sql = "\n".join(sql.splitlines()) + "\n"
 
-    # wrap this in try/except due to indexerror bug that was surfaced shortly after
-    # 0.4.0 release. On next version we can remove it.
-    try:
-        linted = lint(sql, dialect=dialect)
-    except IndexError:
-        linted = []
+    dialect = request.args["dialect"]
+    linted = lint(sql, dialect=dialect)
 
     return render_template(
         "index.html",

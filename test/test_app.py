@@ -2,6 +2,7 @@
 import app
 import pytest
 from app.routes import sql_encode
+from bs4 import BeautifulSoup
 
 
 @pytest.fixture
@@ -41,3 +42,19 @@ def test_results_some_errors(client):
     assert "select * from table" in html
     assert "line / position" in html
     assert "1 / 10" in html  # position of the error
+
+
+def test_carriage_return_sql(client):
+    """Test the splitlines fix.
+    
+    If it doesn't work, we should have one extra fixed character per carriage return.
+    """
+    sql_encoded = sql_encode("select col \r\n \r\n \r\n from xyz")
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+
+    html = rv.data.decode().lower()
+    soup = BeautifulSoup(html, "html.parser")
+    fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
+
+    # we should get an extra z in there if the carriage returns are not well handled.
+    assert fixed_sql.count("z") == 1

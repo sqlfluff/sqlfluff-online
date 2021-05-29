@@ -1,0 +1,19 @@
+name: Deploy To GAE
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - id: deploy
+      uses: google-github-actions/deploy-appengine@main
+      with:
+        credentials: ${{ secrets.GCP_SA_KEY }}
+
+    # Quick HTTP test
+    - id: test
+      run: curl "${{ steps.deploy.outputs.url }}"

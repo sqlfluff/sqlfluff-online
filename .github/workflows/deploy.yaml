@@ -9,6 +9,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - id: deploy
       uses: google-github-actions/deploy-appengine@main
       with:

@@ -46,7 +46,7 @@ def test_results_some_errors(client):
 
 def test_carriage_return_sql(client):
     """Test the splitlines fix.
-    
+
     If it doesn't work, we should have one extra fixed character per carriage return.
     """
     sql_encoded = sql_encode("select col \r\n \r\n \r\n from xyz")
@@ -58,3 +58,22 @@ def test_carriage_return_sql(client):
 
     # we should get an extra z in there if the carriage returns are not well handled.
     assert fixed_sql.count("z") == 1
+
+
+def test_unrecoverable_failure_sql(client):
+    """Test unrecoverable failure
+
+    If we pass templates the online tester can't cope (See issue #25).
+    Make sure it fails gracefully.
+    """
+    sql_encoded = sql_encode(
+        "INSERT into {{ params.schema }}.daily_service_metrics (\nSELECT\n*\nFROM table\n)"
+    )
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+
+    html = rv.data.decode().lower()
+    soup = BeautifulSoup(html, "html.parser")
+    fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
+
+    # we should get an extra z in there if the carriage returns are not well handled.
+    assert fixed_sql.count("z") == 0

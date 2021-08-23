@@ -45,6 +45,11 @@ def fluff_results():
 
     dialect = request.args["dialect"]
     linted = lint(sql, dialect=dialect)
+    fixed_sql = ""
+
+    # Only fix if linting isn't completely broken
+    if "Unrecoverable failure" not in str(linted):
+        fixed_sql = fix(sql, dialect=dialect)
 
     return render_template(
         "index.html",
@@ -52,5 +57,5 @@ def fluff_results():
         sql=sql,
         dialect=dialect,
         lint_errors=linted,
-        fixed_sql=fix(sql, dialect=dialect),
+        fixed_sql=fixed_sql,
     )

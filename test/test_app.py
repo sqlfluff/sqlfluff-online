@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 def client():
     """Application fixture."""
     application = app.create_app()
+    application.debug = True
 
     with application.test_client() as cli:
         yield cli
@@ -46,7 +47,7 @@ def test_results_some_errors(client):
 
 def test_carriage_return_sql(client):
     """Test the splitlines fix.
-    
+
     If it doesn't work, we should have one extra fixed character per carriage return.
     """
     sql_encoded = sql_encode("select col \r\n \r\n \r\n from xyz")
@@ -58,3 +59,12 @@ def test_carriage_return_sql(client):
 
     # we should get an extra z in there if the carriage returns are not well handled.
     assert fixed_sql.count("z") == 1
+
+
+def test_security_headers(client):
+    """Test flask-talisman is setting the security headers"""
+    rv = client.get("/")
+    assert (
+        rv.headers["Content-Security-Policy"] != None
+        and rv.headers["X-Content-Type-Options"] == "nosniff"
+    )

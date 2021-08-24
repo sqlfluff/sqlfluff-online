@@ -75,5 +75,5 @@ def test_unrecoverable_failure_sql(client):
     soup = BeautifulSoup(html, "html.parser")
     fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
 
-    # we should get an extra z in there if the carriage returns are not well handled.
-    assert fixed_sql.count("z") == 0
+    # Check that the fixed_sql returned and is empty (so it was unrecoverable):
+    assert fixed_sql == ""

@@ -47,9 +47,12 @@ def fluff_results():
     linted = lint(sql, dialect=dialect)
     fixed_sql = ""
 
-    # Only fix if linting isn't completely broken
-    if "Unrecoverable failure" not in str(linted):
+    # Fix can fail badly if linting fails so wrap in a try/except.
+    # See: https://github.com/sqlfluff/sqlfluff-online/issues/25
+    try:
         fixed_sql = fix(sql, dialect=dialect)
+    except:
+        pass
 
     return render_template(
         "index.html",

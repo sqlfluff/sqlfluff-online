@@ -31,6 +31,7 @@ __pycache__
 .pytest_cache/
 .tox/
 env/
+.venv/
 
 # other files not needed for deploy
 .github

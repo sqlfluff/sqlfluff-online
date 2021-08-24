@@ -69,7 +69,7 @@
 
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce() }}">
     // hook up ACE editor to all textareas with data-editor attribute
     $(function () {
         $('textarea[data-editor]').each(function () {

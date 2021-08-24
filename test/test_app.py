@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 def client():
     """Application fixture."""
     application = app.create_app()
+    application.debug = True
 
     with application.test_client() as cli:
         yield cli
@@ -78,3 +79,12 @@ def test_unrecoverable_failure_sql(client):
     # Check that the fixed_sql returned (i.e. no exception raised in this test)
     # and it is empty (so it was unrecoverable, so test is still testing what it's suppsed to):
     assert fixed_sql == ""
+
+
+def test_security_headers(client):
+    """Test flask-talisman is setting the security headers"""
+    rv = client.get("/")
+    assert (
+        rv.headers["Content-Security-Policy"] != None
+        and rv.headers["X-Content-Type-Options"] == "nosniff"
+    )

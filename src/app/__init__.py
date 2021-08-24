@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
+from . import csp
 
 limiter = Limiter(
     key_func=get_remote_address, default_limits=["2 per second", "1000 per day"]
@@ -17,6 +19,11 @@ def ip_whitelist():
 def create_app():
     """App factory."""
     app = Flask(__name__)
+    talisman = Talisman(
+        app,
+        content_security_policy=csp.csp,
+        content_security_policy_nonce_in=["script-src"],
+    )
 
     from . import config, routes
 

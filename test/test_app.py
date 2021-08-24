@@ -75,5 +75,6 @@ def test_unrecoverable_failure_sql(client):
     soup = BeautifulSoup(html, "html.parser")
     fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
 
-    # Check that the fixed_sql returned and is empty (so it was unrecoverable):
+    # Check that the fixed_sql returned (i.e. no exception raised in this test)
+    # and it is empty (so it was unrecoverable, so test is still testing what it's suppsed to):
     assert fixed_sql == ""

@@ -45,6 +45,14 @@ def fluff_results():
 
     dialect = request.args["dialect"]
     linted = lint(sql, dialect=dialect)
+    fixed_sql = ""
+
+    # Fix can fail badly if linting fails so wrap in a try/except.
+    # See: https://github.com/sqlfluff/sqlfluff-online/issues/25
+    try:
+        fixed_sql = fix(sql, dialect=dialect)
+    except Exception:
+        pass
 
     return render_template(
         "index.html",
@@ -52,5 +60,5 @@ def fluff_results():
         sql=sql,
         dialect=dialect,
         lint_errors=linted,
-        fixed_sql=fix(sql, dialect=dialect),
+        fixed_sql=fixed_sql,
     )

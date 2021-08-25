@@ -32,6 +32,8 @@ __pycache__
 .tox/
 env/
 .venv/
+.coverage
+coverage.xml
 
 # other files not needed for deploy
 .github

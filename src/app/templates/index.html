@@ -39,7 +39,7 @@
     Hi! I found some errors for you to look at
 </div>
 
-<table class="table table-hover table-sm">
+<table id="table_of_errors" class="table table-hover table-sm">
     <thead>
         <tr>
             <th scope="col">Code</th>
@@ -53,7 +53,7 @@
         <tr>
             <th scope="row">{{violation['code']}}</th>
             <td>{{violation['line_no']}} / {{violation['line_pos']}}</td>
-            <td>{{violation['description']}}</td>
+            <td><pre>{{violation['description'].replace('\\n','\n')}}</pre></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -128,5 +128,13 @@
 
         });
     });
+
+    // Listen out for Command + Enter to submit form
+    window.addEventListener('keydown', function(e) {
+        if(e.keyCode == 13 && e.metaKey) {
+            document.getElementById('submitButton').click();
+        }
+    });
+
 </script>
 {% endblock %}

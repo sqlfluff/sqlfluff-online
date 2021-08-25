@@ -17,8 +17,5 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Lint with Black
-        run: black . --check --verbose
-
-      - name: Unit Testing
+      - name: Lint and Unit Test
         run: tox

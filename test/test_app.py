@@ -68,10 +68,13 @@ def test_carriage_return_sql(client):
     soup = BeautifulSoup(html, "html.parser")
     user_sql = soup.find("textarea", {"id": "user_sql"}).text
     fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
+    table_of_errors = soup.find("table", {"id": "table_of_errors"}).text
 
     # we should get an extra z in there if the carriage returns are not well handled.
     assert fixed_sql.count("z") == 1
     assert user_sql.endswith("\n")
+    assert str("L009").lower() not in table_of_errors
+    assert str("Files must end with a trailing newline").lower() not in table_of_errors
 
 
 def test_unrecoverable_failure_sql(client):
@@ -102,6 +105,7 @@ def test_newlines_in_error(client):
     html = rv.data.decode().lower()
     soup = BeautifulSoup(html, "html.parser")
     table_of_errors = str(soup.find("table", {"id": "table_of_errors"}))
+    # Note we want HTML in above so use str() not .text()
 
     # Check that we have the error with new lines, wrapped in a <pre>:
     assert (

@@ -23,6 +23,17 @@ def test_home(client):
     assert "fixed sql" not in html
 
 
+def test_post_redirect(client):
+    """Test the redirect works."""
+    rv = client.post(
+        "/",
+        data=dict(sql="1234", dialect="ansi"),
+        follow_redirects=False,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    assert rv.status_code == 302 and "/fluffed?sql" in rv.headers["location"]
+
+
 def test_results_no_errors(client):
     """Test that the results is good to go when there is no error."""
     sql_encoded = sql_encode("select * from table")
@@ -55,10 +66,12 @@ def test_carriage_return_sql(client):
 
     html = rv.data.decode().lower()
     soup = BeautifulSoup(html, "html.parser")
+    user_sql = soup.find("textarea", {"id": "user_sql"}).text
     fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
 
     # we should get an extra z in there if the carriage returns are not well handled.
     assert fixed_sql.count("z") == 1
+    assert user_sql.endswith("\n")
 
 
 def test_unrecoverable_failure_sql(client):
@@ -79,6 +92,24 @@ def test_unrecoverable_failure_sql(client):
     # Check that the fixed_sql returned (i.e. no exception raised in this test)
     # and it is empty (so it was unrecoverable, so test is still testing what it's suppsed to):
     assert fixed_sql == ""
+
+
+def test_newlines_in_error(client):
+    """Test newlines in error messages get correctly displayed"""
+    sql_encoded = sql_encode("select 1 from t group by 1\n\nAAAAAA")
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+
+    html = rv.data.decode().lower()
+    soup = BeautifulSoup(html, "html.parser")
+    table_of_errors = str(soup.find("table", {"id": "table_of_errors"}))
+
+    # Check that we have the error with new lines, wrapped in a <pre>:
+    assert (
+        str.lower(
+            "<pre>Line 1, Position 27: Found unparsable section: '\n\nAAAAAA'</pre>"
+        )
+        in table_of_errors
+    )
 
 
 def test_security_headers(client):

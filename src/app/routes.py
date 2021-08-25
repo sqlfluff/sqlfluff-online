@@ -51,7 +51,7 @@ def fluff_results():
     # See: https://github.com/sqlfluff/sqlfluff-online/issues/25
     try:
         fixed_sql = fix(sql, dialect=dialect)
-    except:
+    except Exception:
         pass
 
     return render_template(

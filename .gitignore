@@ -9,3 +9,5 @@ __pycache__
 .tox/
 env/
 .venv/
+.coverage
+coverage.xml

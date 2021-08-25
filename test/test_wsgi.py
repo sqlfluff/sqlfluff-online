@@ -9,7 +9,7 @@ def test_wsgi_app():
     """Confirm that the app is being served."""
     command = ["python", "-m", "app.wsgi", "--port=5000"]
     with subprocess.Popen(command) as proc:
-        time.sleep(1)
+        time.sleep(5)
         resp = requests.get("http://localhost:5000", allow_redirects=False)
         proc.kill()
         # Check Flask Talisman is redirecting to https version

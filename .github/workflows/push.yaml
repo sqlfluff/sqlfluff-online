@@ -21,4 +21,4 @@ jobs:
         run: black . --check --verbose
 
       - name: Unit Testing
-        run: pytest --verbose -s
+        run: pytest --verbose -s --cov src/app --cov-fail-under=100 --cov-report=term-missing 

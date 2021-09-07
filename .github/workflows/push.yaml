@@ -1,4 +1,4 @@
-name: Lint and Test
+name: Lint and 100% Test Coverage
 
 on: [push, pull_request]
 
@@ -17,8 +17,5 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Lint with Black
-        run: black . --check --verbose
-
-      - name: Unit Testing
-        run: pytest --verbose -s
+      - name: Lint and Unit Test
+        run: tox

@@ -1,4 +1,4 @@
-sqlfluff==0.6.4
+sqlfluff==0.6.5
 Flask==2.0.1
 Flask_Limiter==1.4.0
 flask-talisman==0.8.1

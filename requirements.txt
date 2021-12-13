@@ -2,7 +2,7 @@ sqlfluff==0.8.2
 Flask==2.0.2
 Flask_Limiter==2.0.2
 flask-talisman==0.8.1
-gevent==21.8.0
+gevent==21.12.0
 greenlet==1.1.2
 python-dotenv==0.19.2
 -e .

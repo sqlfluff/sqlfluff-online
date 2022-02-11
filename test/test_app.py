@@ -77,26 +77,6 @@ def test_carriage_return_sql(client):
     assert str("Files must end with a trailing newline").lower() not in table_of_errors
 
 
-def test_unrecoverable_failure_sql(client):
-    """Test unrecoverable failure
-
-    If we pass templates the online tester can't cope (See issue #25).
-    Make sure it fails gracefully.
-    """
-    sql_encoded = sql_encode(
-        "INSERT into {{ params.schema }}.daily_service_metrics (\nSELECT\n*\nFROM table\n)"
-    )
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
-
-    html = rv.data.decode().lower()
-    soup = BeautifulSoup(html, "html.parser")
-    fixed_sql = soup.find("textarea", {"id": "fixedsql"}).text
-
-    # Check that the fixed_sql returned (i.e. no exception raised in this test)
-    # and it is empty (so it was unrecoverable, so test is still testing what it's suppsed to):
-    assert fixed_sql == ""
-
-
 def test_newlines_in_error(client):
     """Test newlines in error messages get correctly displayed"""
     sql_encoded = sql_encode("select 1 from t group by 1\n\nAAAAAA")

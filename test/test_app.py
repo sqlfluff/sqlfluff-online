@@ -89,9 +89,7 @@ def test_newlines_in_error(client):
 
     # Check that we have the error with new lines, wrapped in a <pre>:
     assert (
-        str.lower(
-            "<pre>Line 1, Position 27: Found unparsable section: 'AAAAAA'</pre>"
-        )
+        str.lower("<pre>Line 1, Position 27: Found unparsable section: 'AAAAAA'</pre>")
         in table_of_errors
     )
 

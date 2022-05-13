@@ -12,6 +12,7 @@ bp = Blueprint("routes", __name__)
 config_directory = ".temp"
 config_file_name = ".sqlfluff"
 
+
 def parameter_encode(data: str) -> str:
     """Gzip and base-64 encode a string."""
     return base64.urlsafe_b64encode(gzip.compress(data.encode())).decode()
@@ -20,6 +21,7 @@ def parameter_encode(data: str) -> str:
 def parameter_decode(data: str) -> str:
     """Gzip and base-64 decode a string."""
     return gzip.decompress(base64.urlsafe_b64decode(data.encode())).decode()
+
 
 def write_config_file(config: str) -> str:
     file_name = f"{config_directory}/{config_file_name}-{datetime.now()}"
@@ -30,6 +32,7 @@ def write_config_file(config: str) -> str:
     f.write(config)
     f.close()
     return file_name
+
 
 @bp.route("/", methods=["GET", "POST"])
 def home():
@@ -46,7 +49,12 @@ def home():
     dialect = request.form["dialect"]
     sqlfluff_config = request.form["sqlfluff_config"]
     return redirect(
-        url_for("routes.fluff_results", sql=parameter_encode(sql), dialect=dialect, sqlfluff_config=parameter_encode(sqlfluff_config))
+        url_for(
+            "routes.fluff_results",
+            sql=parameter_encode(sql),
+            dialect=dialect,
+            sqlfluff_config=parameter_encode(sqlfluff_config),
+        )
     )
 
 
@@ -60,7 +68,12 @@ def fluff_results():
 
     dialect = request.args["dialect"]
 
-    sqlfluff_config = "\n".join(parameter_decode(request.args["sqlfluff_config"]).strip().splitlines()) + "\n"
+    sqlfluff_config = (
+        "\n".join(
+            parameter_decode(request.args["sqlfluff_config"]).strip().splitlines()
+        )
+        + "\n"
+    )
 
     temp_config_file_path = write_config_file(sqlfluff_config)
 
@@ -68,7 +81,12 @@ def fluff_results():
         linted = lint(sql, dialect=dialect, config_path=temp_config_file_path)
         fixed_sql = fix(sql, dialect=dialect, config_path=temp_config_file_path)
     except MissingSectionHeaderError:
-        linted = [{"code": "config", "description": "Failed to parse the config as it is missing a section header"}]
+        linted = [
+            {
+                "code": "config",
+                "description": "Failed to parse the config as it is missing a section header",
+            }
+        ]
         fixed_sql = ""
 
     os.remove(temp_config_file_path)

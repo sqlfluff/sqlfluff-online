@@ -12,12 +12,12 @@ bp = Blueprint("routes", __name__)
 config_directory = ".temp"
 config_file_name = ".sqlfluff"
 
-def sql_encode(data: str) -> str:
+def parameter_encode(data: str) -> str:
     """Gzip and base-64 encode a string."""
     return base64.urlsafe_b64encode(gzip.compress(data.encode())).decode()
 
 
-def sql_decode(data: str) -> str:
+def parameter_decode(data: str) -> str:
     """Gzip and base-64 decode a string."""
     return gzip.decompress(base64.urlsafe_b64decode(data.encode())).decode()
 
@@ -46,7 +46,7 @@ def home():
     dialect = request.form["dialect"]
     sqlfluff_config = request.form["sqlfluff_config"]
     return redirect(
-        url_for("routes.fluff_results", sql=sql_encode(sql), dialect=dialect, sqlfluff_config=sql_encode(sqlfluff_config))
+        url_for("routes.fluff_results", sql=parameter_encode(sql), dialect=dialect, sqlfluff_config=parameter_encode(sqlfluff_config))
     )
 
 
@@ -55,12 +55,12 @@ def fluff_results():
     """Serve the results page."""
     # we get carriage returns from the form somehow. so split on them and join via
     # regular newline. add a newline to avoid the annoying newline-at-end-of-file error.
-    sql = sql_decode(request.args["sql"]).strip()
+    sql = parameter_decode(request.args["sql"]).strip()
     sql = "\n".join(sql.splitlines()) + "\n"
 
     dialect = request.args["dialect"]
 
-    sqlfluff_config = "\n".join(sql_decode(request.args["sqlfluff_config"]).strip().splitlines()) + "\n"
+    sqlfluff_config = "\n".join(parameter_decode(request.args["sqlfluff_config"]).strip().splitlines()) + "\n"
 
     temp_config_file_path = write_config_file(sqlfluff_config)
 

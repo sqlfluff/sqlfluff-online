@@ -11,3 +11,4 @@ env/
 .venv/
 .coverage
 coverage.xml
+.idea/

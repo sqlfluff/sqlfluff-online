@@ -39,3 +39,5 @@ coverage.xml
 # other files not needed for deploy
 .github
 test/
+
+.idea/

@@ -1,3 +1,4 @@
+service: sqlfluff
 runtime: python38
 instance_class: F1
 entrypoint: python -m app.wsgi --port 8080

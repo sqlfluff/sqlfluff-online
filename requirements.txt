@@ -5,4 +5,7 @@ flask-talisman==1.0.0
 gevent==21.12.0
 greenlet==1.1.2
 python-dotenv==0.20.0
+# https://stackoverflow.com/a/71653849
+Werkzeug==2.0.0
+jinja2==3.0.3
 -e .

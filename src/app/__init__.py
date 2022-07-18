@@ -1,8 +1,9 @@
 """Init the applicaiton."""
-from flask import Flask, render_template, request
+from flask import Flask, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
+
 from . import csp
 
 limiter = Limiter(
@@ -37,6 +38,7 @@ def create_app():
             all_rules=config.VALID_RULES,
             all_dialects=config.VALID_DIALECTS,
             sqlfluff_version=config.SQLFLUFF_VERSION,
+            dialect=config.DEFAULT_DIALECT,
         )
 
     return app

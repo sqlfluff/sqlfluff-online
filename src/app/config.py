@@ -7,3 +7,7 @@ VALID_DIALECTS = tuple(d.name for d in sqlfluff.list_dialects())
 
 # dict mapping string rule names to descriptions
 VALID_RULES = {r.code: r.description for r in sqlfluff.list_rules()}
+
+DEFAULT_DIALECT = "bigquery"
+
+CONFIG_PATH = "src/app/.sqlfluff"

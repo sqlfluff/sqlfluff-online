@@ -4,6 +4,8 @@ import gzip
 from flask import Blueprint, redirect, render_template, request, url_for
 from sqlfluff.api import fix, lint
 
+from . import config
+
 bp = Blueprint("routes", __name__)
 
 
@@ -44,8 +46,8 @@ def fluff_results():
     sql = "\n".join(sql.splitlines()) + "\n"
 
     dialect = request.args["dialect"]
-    linted = lint(sql, dialect=dialect)
-    fixed_sql = fix(sql, dialect=dialect)
+    linted = lint(sql, dialect=dialect, config_path=config.CONFIG_PATH)
+    fixed_sql = fix(sql, dialect=dialect, config_path=config.CONFIG_PATH)
     return render_template(
         "index.html",
         results=True,

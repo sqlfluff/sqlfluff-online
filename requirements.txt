@@ -1,5 +1,5 @@
 sqlfluff==1.2.1
-Flask==2.2.1
+Flask==2.2.2
 Flask_Limiter==2.5.1
 flask-talisman==1.0.0
 gevent==21.12.0

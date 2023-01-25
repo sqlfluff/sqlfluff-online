@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - id: deploy
-      uses: google-github-actions/deploy-appengine@main
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
       with:
-        credentials: ${{ secrets.GCP_SA_KEY }}
+        credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON }}'
+    - id: 'deploy'
+      uses: google-github-actions/deploy-appengine@v1
 
     # Quick HTTP test
     - id: test

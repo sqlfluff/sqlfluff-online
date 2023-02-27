@@ -4,5 +4,5 @@ Flask_Limiter==3.2.0
 flask-talisman==1.0.0
 gevent==22.10.2
 greenlet==2.0.2
-python-dotenv==0.21.1
+python-dotenv==1.0.0
 -e .

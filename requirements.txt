@@ -1,6 +1,6 @@
 sqlfluff==2.3.0
 Flask==2.3.3
-Flask_Limiter==3.3.1
+Flask_Limiter==3.4.1
 flask-talisman==1.1.0
 gevent==23.7.0
 greenlet==2.0.2

@@ -4,5 +4,5 @@ coverage==7.3.0
 black==23.7.0
 requests==2.31.0
 beautifulsoup4==4.12.2
-tox==4.10.0
+tox==4.11.1
 -r requirements.txt

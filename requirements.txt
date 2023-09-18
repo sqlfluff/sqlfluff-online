@@ -2,7 +2,7 @@ sqlfluff==2.3.2
 Flask==2.3.3
 Flask_Limiter==3.5.0
 flask-talisman==1.1.0
-gevent==23.9.0.post1
+gevent==23.9.1
 greenlet==2.0.2
 python-dotenv==1.0.0
 -e .

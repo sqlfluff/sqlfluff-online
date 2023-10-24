@@ -8,7 +8,7 @@ You can also submit a PR if you'd like! If viable, your submission should includ
 
 ## Developer Setup
 
-Set up a python (3.8) environment however you'd like. Install the developer requires to your python environment:
+Set up a python (3.10) environment however you'd like. Install the developer requires to your python environment:
 
 ```sh
 $ pip install -r requirements-dev.txt

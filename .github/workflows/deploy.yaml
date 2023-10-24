@@ -10,13 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - id: 'auth'
+    - name: Authorize to Google Cloud
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_JSON }}'
-    - id: 'deploy'
+
+    - name: Deploy to App Engine
+      id: deploy
       uses: google-github-actions/deploy-appengine@v1
 
-    # Quick HTTP test
-    - id: test
+    - name: cURL Test
+      run: curl "${{ steps.deploy.outputs.url }}"
+
+    - name: Set up Cloud SDK
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: Delete Old App Versions
+      # delete all but latest 5 versions
+      run: |
+        gcloud app versions list \
+          --format="value(version.id)" \
+          --sort-by="~version.createTime" \
+          | tail -n +5 \
+          | xargs -r gcloud app versions delete --quiet
+
+    # make sure we didn't delete the current version
+    - name: cURL Test
       run: curl "${{ steps.deploy.outputs.url }}"

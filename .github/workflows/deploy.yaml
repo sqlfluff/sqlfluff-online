@@ -23,7 +23,7 @@ jobs:
       run: curl "${{ steps.deploy.outputs.url }}"
 
     - name: Set up Cloud SDK
-      uses: 'google-github-actions/setup-gcloud@v1'
+      uses: 'google-github-actions/setup-gcloud@v2'
 
     - name: Delete Old App Versions
       # delete all but latest 5 versions

@@ -1,4 +1,5 @@
 """Tests for the application."""
+
 import app
 import pytest
 from app.routes import sql_encode

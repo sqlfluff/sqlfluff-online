@@ -1,4 +1,5 @@
 """Tests for the application."""
+
 import subprocess
 import time
 

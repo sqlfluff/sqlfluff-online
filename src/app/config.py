@@ -1,4 +1,5 @@
 """Export global config variables."""
+
 import sqlfluff
 
 SQLFLUFF_VERSION = sqlfluff.__version__

@@ -52,7 +52,7 @@
         {% for violation in lint_errors %}
         <tr>
             <th scope="row">{{violation['code']}}</th>
-            <td>{{violation['line_no']}} / {{violation['line_pos']}}</td>
+            <td>{{violation['start_line_no']}} / {{violation['start_line_pos']}}</td>
             <td><pre>{{violation['description'].replace('\\n','\n')}}</pre></td>
         </tr>
         {% endfor %}

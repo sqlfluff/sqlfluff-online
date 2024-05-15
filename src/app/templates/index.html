@@ -20,6 +20,10 @@
             </option>
             {% endfor %}
         </select>
+
+        <label for="sqlfluff_config">Config</label>
+        <textarea class="form-control text-monospace" name='sqlfluff_config' id="sqlfluff_config"
+                  rows="8">{{sqlfluff_config}}</textarea>
     </div>
 
     <button type="submit" class="btn btn-primary mb-2 btn-block" id="submitButton">Help me.</button>

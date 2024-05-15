@@ -2,7 +2,7 @@
 
 import app
 import pytest
-from app.routes import sql_encode
+from app.routes import parameter_encode
 from bs4 import BeautifulSoup
 
 
@@ -28,7 +28,7 @@ def test_post_redirect(client):
     """Test the redirect works."""
     rv = client.post(
         "/",
-        data=dict(sql="1234", dialect="ansi"),
+        data=dict(sql="1234", dialect="ansi", sqlfluff_config="5678"),
         follow_redirects=False,
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
@@ -37,8 +37,12 @@ def test_post_redirect(client):
 
 def test_results_no_errors(client):
     """Test that the results is good to go when there is no error."""
-    sql_encoded = sql_encode("select * from table")
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    sql_encoded = parameter_encode("select * from table")
+    sqlfluff_config_encoded = parameter_encode("[sqlfluff]\n")
+    rv = client.get(
+        "/fluffed",
+        query_string=f"""dialect=ansi&sql={sql_encoded}&sqlfluff_config={sqlfluff_config_encoded}""",
+    )
     html = rv.data.decode().lower()
     assert "sqlfluff online" in html
     assert "fixed sql" in html
@@ -47,8 +51,12 @@ def test_results_no_errors(client):
 
 def test_results_some_errors(client):
     """Test that the results is good to go with one obvious error."""
-    sql_encoded = sql_encode("select * FROM table")
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    sql_encoded = parameter_encode("select * FROM table")
+    sqlfluff_config_encoded = parameter_encode("[sqlfluff]\n")
+    rv = client.get(
+        "/fluffed",
+        query_string=f"""dialect=ansi&sql={sql_encoded}&sqlfluff_config={sqlfluff_config_encoded}""",
+    )
     html = rv.data.decode().lower()
     assert "sqlfluff online" in html
     assert "fixed sql" in html
@@ -62,8 +70,12 @@ def test_carriage_return_sql(client):
 
     If it doesn't work, we should have one extra fixed character per carriage return.
     """
-    sql_encoded = sql_encode("select col \r\n \r\n \r\n from xyz")
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    sql_encoded = parameter_encode("select col \r\n \r\n \r\n from xyz")
+    sqlfluff_config_encoded = parameter_encode("[sqlfluff]\n")
+    rv = client.get(
+        "/fluffed",
+        query_string=f"""dialect=ansi&sql={sql_encoded}&sqlfluff_config={sqlfluff_config_encoded}""",
+    )
 
     html = rv.data.decode().lower()
     soup = BeautifulSoup(html, "html.parser")
@@ -80,8 +92,12 @@ def test_carriage_return_sql(client):
 
 def test_newlines_in_error(client):
     """Test newlines in error messages get correctly displayed"""
-    sql_encoded = sql_encode("select 1 from t group by 1\n\nAAAAAA")
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    sql_encoded = parameter_encode("select 1 from t group by 1\n\nAAAAAA")
+    sqlfluff_config_encoded = parameter_encode("[sqlfluff]\n")
+    rv = client.get(
+        "/fluffed",
+        query_string=f"""dialect=ansi&sql={sql_encoded}&sqlfluff_config={sqlfluff_config_encoded}""",
+    )
 
     html = rv.data.decode().lower()
     soup = BeautifulSoup(html, "html.parser")

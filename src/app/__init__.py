@@ -5,6 +5,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 from . import csp
+from os import environ
 
 limiter = Limiter(
     key_func=get_remote_address, default_limits=["2 per second", "1000 per day"]
@@ -24,6 +25,7 @@ def create_app():
         app,
         content_security_policy=csp.csp,
         content_security_policy_nonce_in=["script-src"],
+        force_https=not environ.get("FLASK_ENV") == "development",
     )
 
     from . import config, routes

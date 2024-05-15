@@ -47,7 +47,7 @@ def fluff_results():
     try:
         linted = lint(sql, dialect=dialect)
         fixed_sql = fix(sql, dialect=dialect)
-    except RuntimeError as e:  # pragma: no cover
+    except RuntimeError as e:
         linted = [
             {
                 "start_line_no": 1,

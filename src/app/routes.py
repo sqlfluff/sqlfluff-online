@@ -44,8 +44,19 @@ def fluff_results():
     sql = "\n".join(sql.splitlines()) + "\n"
 
     dialect = request.args["dialect"]
-    linted = lint(sql, dialect=dialect)
-    fixed_sql = fix(sql, dialect=dialect)
+    try:
+        linted = lint(sql, dialect=dialect)
+        fixed_sql = fix(sql, dialect=dialect)
+    except RuntimeError as e:
+        linted = [
+            {
+                "start_line_no": 1,
+                "start_line_pos": 1,
+                "code": "RuntimeError",
+                "description": str(e),
+            }
+        ]
+        fixed_sql = sql
     return render_template(
         "index.html",
         results=True,

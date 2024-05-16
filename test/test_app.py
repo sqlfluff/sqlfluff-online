@@ -4,6 +4,7 @@ import app
 import pytest
 from app.routes import sql_encode
 from bs4 import BeautifulSoup
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -93,6 +94,20 @@ def test_newlines_in_error(client):
         str.lower("<pre>Line 3, Position 1: Found unparsable section: 'AAAAAA'</pre>")
         in table_of_errors
     )
+
+
+@patch("app.routes.lint")
+def test_runtime_error(mock_lint, client):
+    """Test that a runtime error is handled."""
+    mock_lint.side_effect = RuntimeError("This is a test error")
+    sql_encoded = sql_encode("select * from table")
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    html = rv.data.decode().lower()
+    assert "sqlfluff online" in html
+    assert "fixed sql" in html
+    assert "select * from table" in html
+    assert "runtimeerror" in html
+    assert "this is a test error" in html
 
 
 def test_security_headers(client):

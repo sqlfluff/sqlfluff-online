@@ -3,6 +3,7 @@ import gzip
 
 from flask import Blueprint, redirect, render_template, request, url_for
 from sqlfluff.api import fix, lint
+from .config import VALID_DIALECTS
 
 bp = Blueprint("routes", __name__)
 
@@ -43,10 +44,25 @@ def fluff_results():
     sql = sql_decode(request.args["sql"]).strip()
     sql = "\n".join(sql.splitlines()) + "\n"
 
+    # dialect must be a dialect label for `load_raw_dialect`. VALID_DIALECTS is a
+    # dictionary of dialect labels to dialect names. If we have a name, we need to
+    # get the label.
+    #
+    # However, the frontend logic runs on dialect names, so we need to convert the
+    # label back to a name for the frontend.
     dialect = request.args["dialect"]
+    if dialect in VALID_DIALECTS.values():
+        dialect_name = dialect
+        dialect_label = next(
+            label for label, name in VALID_DIALECTS.items() if name == dialect
+        )
+    else:
+        dialect_label = dialect
+        dialect_name = VALID_DIALECTS[dialect]
+
     try:
-        linted = lint(sql, dialect=dialect)
-        fixed_sql = fix(sql, dialect=dialect)
+        linted = lint(sql, dialect=dialect_label)
+        fixed_sql = fix(sql, dialect=dialect_label)
     except RuntimeError as e:
         linted = [
             {
@@ -61,7 +77,7 @@ def fluff_results():
         "index.html",
         results=True,
         sql=sql,
-        dialect=dialect,
+        dialect=dialect_name,
         lint_errors=linted,
         fixed_sql=fixed_sql,
     )

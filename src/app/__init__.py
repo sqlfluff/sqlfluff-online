@@ -38,7 +38,7 @@ def create_app():
         """Inject arbitrary data into all templates."""
         return dict(
             all_rules=config.VALID_RULES,
-            all_dialects=config.VALID_DIALECTS,
+            all_dialects=list(config.VALID_DIALECTS.values()),
             sqlfluff_version=config.SQLFLUFF_VERSION,
         )
 

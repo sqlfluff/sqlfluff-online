@@ -36,10 +36,15 @@ def test_post_redirect(client):
     assert rv.status_code == 302 and "/fluffed?sql" in rv.headers["location"]
 
 
-def test_results_no_errors(client):
-    """Test that the results is good to go when there is no error."""
+@pytest.mark.parametrize("dialect", ["sparksql", "Apache Spark SQL"])
+def test_results_no_errors(client, dialect):
+    """Test that the results is good to go when there is no error.
+    
+    Parameterized dialect asserts that either the formatted name or label can be used
+    as the dialect parameter.
+    """
     sql_encoded = sql_encode("select * from table")
-    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+    rv = client.get("/fluffed", query_string=f"""dialect={dialect}&sql={sql_encoded}""")
     html = rv.data.decode().lower()
     assert "sqlfluff online" in html
     assert "fixed sql" in html

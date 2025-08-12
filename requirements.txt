@@ -3,6 +3,6 @@ Flask==3.1.1
 Flask_Limiter==3.12
 flask-talisman==1.1.0
 gevent==25.5.1
-greenlet==3.2.3
+greenlet==3.2.4
 python-dotenv==1.1.1
 -e .

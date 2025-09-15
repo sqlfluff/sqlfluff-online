@@ -1,5 +1,5 @@
 pytest==8.4.2
-pytest-cov==6.3.0
+pytest-cov==7.0.0
 coverage==7.10.6
 black==25.1.0
 requests==2.32.5

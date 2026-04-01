@@ -2,6 +2,7 @@
 
 import app
 import pytest
+from app.config import SQL_CHAR_LIMIT
 from app.routes import sql_encode
 from bs4 import BeautifulSoup
 from unittest.mock import patch
@@ -25,6 +26,13 @@ def test_home(client):
     assert "fixed sql" not in html
 
 
+def test_home_contains_shared_sql_char_limit(client):
+    """Test that the frontend character limit is sourced from shared config."""
+    rv = client.get("/")
+    html = rv.data.decode()
+    assert f"var maxLength = {SQL_CHAR_LIMIT};" in html
+
+
 def test_post_redirect(client):
     """Test the redirect works."""
     rv = client.post(
@@ -34,6 +42,19 @@ def test_post_redirect(client):
         headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
     assert rv.status_code == 302 and "/fluffed?sql" in rv.headers["location"]
+
+
+@patch("app.routes.sql_encode")
+def test_post_rejects_over_limit_sql(mock_sql_encode, client):
+    """Reject payloads that exceed the SQL character limit."""
+    rv = client.post(
+        "/",
+        data=dict(sql="x" * (SQL_CHAR_LIMIT + 1), dialect="ansi"),
+        follow_redirects=False,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    assert rv.status_code == 413
+    mock_sql_encode.assert_not_called()
 
 
 @pytest.mark.parametrize("dialect", ["sparksql", "Apache Spark SQL"])
@@ -69,6 +90,18 @@ def test_results_some_errors(client):
     assert "select * from table" in html
     assert "line / position" in html
     assert "1 / 10" in html  # position of the error
+
+
+@patch("app.routes.lint")
+@patch("app.routes.fix")
+def test_results_rejects_over_limit_sql(mock_fix, mock_lint, client):
+    """Reject over-limit SQL before lint or fix processing."""
+    sql_encoded = sql_encode("x" * (SQL_CHAR_LIMIT + 1))
+    rv = client.get("/fluffed", query_string=f"""dialect=ansi&sql={sql_encoded}""")
+
+    assert rv.status_code == 413
+    mock_lint.assert_not_called()
+    mock_fix.assert_not_called()
 
 
 def test_carriage_return_sql(client):

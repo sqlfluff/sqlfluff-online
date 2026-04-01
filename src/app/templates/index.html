@@ -92,7 +92,7 @@
             editor.getSession().setMode("ace/mode/" + mode);
             editor.setTheme("ace/theme/chrome");
 
-            var maxLength = 3000;
+            var maxLength = {{ sql_char_limit }};
 
             // update character counter on keyup
             editor.textInput.getElement().onkeyup = function () {

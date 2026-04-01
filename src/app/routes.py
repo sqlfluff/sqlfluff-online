@@ -1,11 +1,17 @@
 import base64
 import gzip
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 from sqlfluff.api import fix, lint
-from .config import VALID_DIALECTS
+from .config import SQL_CHAR_LIMIT, VALID_DIALECTS
 
 bp = Blueprint("routes", __name__)
+
+
+def enforce_sql_char_limit(sql: str) -> None:
+    """Abort the request if SQL exceeds the configured character limit."""
+    if len(sql) > SQL_CHAR_LIMIT:
+        abort(413, description=f"SQL payload exceeds {SQL_CHAR_LIMIT} characters")
 
 
 def sql_encode(data: str) -> str:
@@ -30,6 +36,7 @@ def home():
     # this encoding dance is to protect against the possibility of getting a very
     # long SQL string that breaks something in HTTP get.
     sql = request.form["sql"]
+    enforce_sql_char_limit(sql)
     dialect = request.form["dialect"]
     return redirect(
         url_for("routes.fluff_results", sql=sql_encode(sql), dialect=dialect)
@@ -42,6 +49,7 @@ def fluff_results():
     # we get carriage returns from the form somehow. so split on them and join via
     # regular newline. add a newline to avoid the annoying newline-at-end-of-file error.
     sql = sql_decode(request.args["sql"]).strip()
+    enforce_sql_char_limit(sql)
     sql = "\n".join(sql.splitlines()) + "\n"
 
     # dialect must be a dialect label for `load_raw_dialect`. VALID_DIALECTS is a

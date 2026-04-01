@@ -40,6 +40,7 @@ def create_app():
             all_rules=config.VALID_RULES,
             all_dialects=list(config.VALID_DIALECTS.values()),
             sqlfluff_version=config.SQLFLUFF_VERSION,
+            sql_char_limit=config.SQL_CHAR_LIMIT,
         )
 
     return app

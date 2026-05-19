@@ -2,7 +2,7 @@ pytest==9.0.3
 pytest-cov==7.1.0
 coverage==7.14.0
 black==26.5.1
-requests==2.34.0
+requests==2.34.2
 beautifulsoup4==4.14.3
-tox==4.53.1
+tox==4.54.0
 -r requirements.txt

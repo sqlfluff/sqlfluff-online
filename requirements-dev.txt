@@ -1,6 +1,6 @@
 pytest==9.0.3
 pytest-cov==7.1.0
-coverage==7.14.0
+coverage==7.14.1
 black==26.5.1
 requests==2.34.2
 beautifulsoup4==4.14.3

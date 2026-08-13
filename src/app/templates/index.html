@@ -3,8 +3,11 @@
 <h2>Your Terrible SQL</h2>
 <form action='{{url_for("routes.home")}}' method="post">
     <div class="form-group">
-        <textarea class="form-control text-monospace" name='sql' data-editor="sql" , id="user_sql"
-            rows="20">{{sql}}</textarea>
+        <div class="sqlfluff-terminal">
+            <div class="sqlfluff-terminal-header">input.sql</div>
+            <textarea class="form-control text-monospace" name='sql' data-editor="sql" id="user_sql"
+                rows="20">{{sql}}</textarea>
+        </div>
         <div id="counter-container">
             <small id="counter"></small>
         </div>
@@ -22,7 +25,7 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary mb-2 btn-block" id="submitButton">Help me.</button>
+    <button type="submit" class="sqlfluff-button sqlfluff-button-primary btn-block mb-2" id="submitButton">Help me.</button>
 </form>
 {% endblock %}
 
@@ -30,7 +33,10 @@
 {% block right %}
 {% if results %}
 <h2>SQLFluff's Fixed SQL</h2>
-<textarea id=fixedSQL class="form-control text-monospace" rows="20" readonly>{{fixed_sql}}</textarea>
+<div class="sqlfluff-terminal">
+    <div class="sqlfluff-terminal-header">output.sql</div>
+    <textarea id=fixedSQL class="form-control text-monospace" data-editor="sql" rows="20" readonly>{{fixed_sql}}</textarea>
+</div>
 
 <hr>
 
@@ -90,7 +96,15 @@
             editor.renderer.setShowGutter(true);
             editor.getSession().setValue(textarea.val());
             editor.getSession().setMode("ace/mode/" + mode);
-            editor.setTheme("ace/theme/chrome");
+            editor.setTheme("ace/theme/tomorrow_night");
+
+            // read-only editors (the fixed-SQL output) are for display only:
+            // no character counter, length limit, or submit-sync wiring.
+            if (textarea.prop("readonly")) {
+                editor.setReadOnly(true);
+                editor.renderer.$cursorLayer.element.style.display = "none";
+                return;
+            }
 
             var maxLength = {{ sql_char_limit }};
 

@@ -11,3 +11,6 @@ env/
 .venv/
 .coverage
 coverage.xml
+
+# synced from vendor/sqlfluff-design via scripts/design_sync.sh
+src/app/static/sqlfluff-design/

@@ -1,6 +1,22 @@
 <!doctype html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f8f8">
+    <title>SQLFluff Online</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='sqlfluff-design/img/favicon.ico') }}" sizes="any">
+    <link rel="icon" href="{{ url_for('static', filename='sqlfluff-design/img/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='sqlfluff-design/img/favicon-16x16.png') }}" sizes="16x16" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='sqlfluff-design/img/apple-touch-icon.png') }}">
+
+    <script src="{{ url_for('static', filename='sqlfluff-design/js/theme.js') }}" nonce="{{ csp_nonce() }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sqlfluff-design/css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sqlfluff-design/css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sqlfluff-design/css/components.css') }}">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
         integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -12,90 +28,106 @@
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous" nonce="{{ csp_nonce() }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" type="text/javascript" charset="utf-8" nonce="{{ csp_nonce() }}"></script>
-</head>
 
-<body>
-
-    <!-- A two column layout -->
-    <div class="container">
-        <h1>&#127881 SQLFluff Online &#127881</h1>
-
-        <p>
-            <a href='https://github.com/sqlfluff/sqlfluff'>SQLFluff</a> is a SQL
-            formatter that is implemented in Python. You can use this app to format
-            one-off, adhoc sql that might not be worth saving to a file. Or you can use
-            it to see what SQLFluff thinks of your queries. It's up to you!
-        </p>
-
-        <p>
-            You can check out the source code for this application on GitHub
-            (<a href='https://github.com/sqlfluff/sqlfluff-online'>click</a>).
-        </p>
-
-        <p>
-            Paste your SQL and select your dialect. Hit that button and find your fixed
-            SQL with the associated linter errors. Enjoy, friends &#127773.
-        </p>
-
-        <hr>
-
-        <div class="row">
-            <!-- user input -->
-            <div class="col-sm">
-                {% block left %}{% endblock %}
-            </div>
-
-            <div class="col-sm">
-                {% block right %}{% endblock %}
-            </div>
-        </div>
-
-        <hr>
-
-        <button class="btn btn btn-outline-dark btn-block" type="button" data-toggle="collapse" data-target="#more_info"
-            aria-expanded="false" aria-controls="collapseExample">
-            Click me for more info on this app
-        </button>
-
-        <hr>
-
-        <div class="collapse" id=more_info>
-            <p>
-                SQLFluff is maintained by a group of <s>talented</s> attractive and
-                selfless people who are all driven by a common disdain for poorly
-                formatted SQL. If you like fluff's treatment of your queries, feel
-                encouraged to check out our group on
-                <a href='https://github.com/sqlfluff'>GitHub</a>!
-            </p>
-            <p>
-                This app runs on SQLFluff version {{sqlfluff_version}}, and applies all
-                rules in that version. Here is a list of them:
-            </p>
-
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th scope="col">Rule</th>
-                        <th scope="col">Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    {% for code, description in all_rules.items() %}
-                    <tr>
-                        <th scope="row">{{code}}</th>
-                        <td>{{description}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <style>
+    <style nonce="{{ csp_nonce() }}">
+        /* Bootstrap's own bare-element rules are unlayered, so they beat
+           sqlfluff-base's layered rules for the same elements. Reassert the
+           tokens here. */
         body {
-            margin: 2em;
-            max-width: 1500px;
+            background: var(--sqlfluff-color-canvas);
+            color: var(--sqlfluff-color-text);
+            font-family: var(--sqlfluff-font-sans);
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: var(--sqlfluff-font-sans);
+        }
+
+        pre,
+        code,
+        #user_sql,
+        #fixedSQL {
+            font-family: var(--sqlfluff-font-mono);
+        }
+
+        /* Bootstrap hardcodes `pre` to its own near-black text colour,
+           independent of the .table colour it sits inside. */
+        pre {
+            color: inherit;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 1.75rem; }
+        h3 { font-size: 1.15rem; }
+
+        a {
+            color: var(--sqlfluff-color-accent);
+        }
+
+        a:hover {
+            color: var(--sqlfluff-color-accent-hover);
+        }
+
+        /* Bootstrap's table text/border colours are fixed, near-black
+           values, so they go near-invisible against the dark canvas. */
+        .table {
+            color: var(--sqlfluff-color-text);
+        }
+
+        .table th,
+        .table td {
+            border-color: var(--sqlfluff-color-border);
+        }
+
+        .table-hover tbody tr:hover {
+            color: var(--sqlfluff-color-text);
+            background-color: var(--sqlfluff-color-surface-muted);
+        }
+
+        /* Bootstrap's alert colour pairs are fixed pastels that wash out
+           against the dark canvas; reassert readable variants sharing the
+           same GitHub-dark-derived palette as the code tokens. */
+        html[data-theme="dark"] .alert-danger {
+            color: var(--sqlfluff-color-code-red);
+            background-color: rgba(255, 123, 114, 0.12);
+            border-color: rgba(255, 123, 114, 0.35);
+        }
+
+        html[data-theme="dark"] .alert-success {
+            color: #3fb950;
+            background-color: rgba(63, 185, 80, 0.12);
+            border-color: rgba(63, 185, 80, 0.35);
+        }
+
+        /* Give the SQL input/output boxes the same fixed-dark terminal
+           treatment used for code elsewhere in the SQLFluff brand, rather
+           than Bootstrap's white form-control. The Ace-backed input picks
+           up its own colours from its dark theme; this only strips
+           Bootstrap's chrome so the shared .sqlfluff-terminal frame shows
+           through. */
+        .sqlfluff-terminal .form-control {
+            background: transparent;
+            color: var(--sqlfluff-color-code-text);
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+
+        /* btn-block switches these to display:block for full width; centre
+           the label since justify-content only applies to the flex layout
+           sqlfluff-button otherwise uses. */
+        .sqlfluff-button.btn-block {
+            text-align: center;
         }
 
         #counter-container {
@@ -105,7 +137,143 @@
         #counter {
             padding: .25rem .75rem;
         }
-
     </style>
+</head>
+
+<body>
+    <a class="sqlfluff-skip-link" href="#main-content">Skip to content</a>
+    <header class="sqlfluff-site-header" data-sqlfluff-nav>
+        <div class="sqlfluff-container sqlfluff-header-inner">
+            <a class="sqlfluff-brand" href="{{ url_for('routes.home') }}" aria-label="SQLFluff home">
+                <img src="{{ url_for('static', filename='sqlfluff-design/img/sqlfluff-wide.png') }}" alt="">
+            </a>
+            <button class="sqlfluff-nav-toggle" type="button" aria-expanded="false"
+                aria-controls="sqlfluff-global-nav" data-sqlfluff-nav-toggle>
+                <span class="sqlfluff-visually-hidden">Open navigation</span>
+                <span></span><span></span><span></span>
+            </button>
+            <nav id="sqlfluff-global-nav" class="sqlfluff-nav"
+                aria-label="Global navigation" data-sqlfluff-nav-menu>
+                <a href="{{ url_for('routes.home') }}" aria-current="page">Online</a>
+                <a href="https://docs.sqlfluff.com">Docs</a>
+                <a href="https://github.com/sqlfluff/sqlfluff-online">GitHub</a>
+                <div class="sqlfluff-theme-control">
+                    <span id="sqlfluff-theme-label" class="sqlfluff-visually-hidden">Colour theme</span>
+                    <div class="sqlfluff-theme-switcher" role="group"
+                        aria-labelledby="sqlfluff-theme-label">
+                        <button type="button" data-sqlfluff-theme-value="auto"
+                            aria-label="Use system theme" title="System theme" aria-pressed="false">
+                            <span class="sqlfluff-theme-icon sqlfluff-theme-icon-system" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" data-sqlfluff-theme-value="light"
+                            aria-label="Use light theme" title="Light theme" aria-pressed="false">
+                            <span class="sqlfluff-theme-icon sqlfluff-theme-icon-light" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" data-sqlfluff-theme-value="dark"
+                            aria-label="Use dark theme" title="Dark theme" aria-pressed="false">
+                            <span class="sqlfluff-theme-icon sqlfluff-theme-icon-dark" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="sqlfluff-main">
+        <div class="sqlfluff-container">
+            <h1>SQLFluff Online</h1>
+
+            <p>
+                <a href='https://github.com/sqlfluff/sqlfluff'>SQLFluff</a> is a SQL
+                formatter that is implemented in Python. You can use this app to format
+                one-off, adhoc sql that might not be worth saving to a file. Or you can use
+                it to see what SQLFluff thinks of your queries. It's up to you!
+            </p>
+
+            <p>
+                You can check out the source code for this application on GitHub
+                (<a href='https://github.com/sqlfluff/sqlfluff-online'>click</a>).
+            </p>
+
+            <p>
+                Paste your SQL and select your dialect. Hit that button and find your fixed
+                SQL with the associated linter errors. Enjoy, friends.
+            </p>
+
+            <hr>
+
+            <div class="row">
+                <!-- user input -->
+                <div class="col-sm">
+                    {% block left %}{% endblock %}
+                </div>
+
+                <div class="col-sm">
+                    {% block right %}{% endblock %}
+                </div>
+            </div>
+
+            <hr>
+
+            <button class="sqlfluff-button btn-block" type="button" data-toggle="collapse" data-target="#more_info"
+                aria-expanded="false" aria-controls="collapseExample">
+                Click me for more info on this app
+            </button>
+
+            <hr>
+
+            <div class="collapse" id=more_info>
+                <p>
+                    SQLFluff is maintained by a group of <s>talented</s> attractive and
+                    selfless people who are all driven by a common disdain for poorly
+                    formatted SQL. If you like fluff's treatment of your queries, feel
+                    encouraged to check out our group on
+                    <a href='https://github.com/sqlfluff'>GitHub</a>!
+                </p>
+                <p>
+                    This app runs on SQLFluff version {{sqlfluff_version}}, and applies all
+                    rules in that version. Here is a list of them:
+                </p>
+
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rule</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for code, description in all_rules.items() %}
+                        <tr>
+                            <th scope="row">{{code}}</th>
+                            <td>{{description}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="sqlfluff-site-footer">
+        <div class="sqlfluff-container">
+            <div class="sqlfluff-footer-grid">
+                <div>
+                    <p class="sqlfluff-footer-title">SQLFluff</p>
+                    <p class="sqlfluff-footer-copy">The SQL linter for humans.</p>
+                </div>
+                <nav class="sqlfluff-footer-links" aria-label="Project links">
+                    <a href="https://docs.sqlfluff.com">Documentation</a>
+                    <a href="https://github.com/sqlfluff/sqlfluff-online">GitHub source</a>
+                </nav>
+                <nav class="sqlfluff-footer-links" aria-label="Community links">
+                    <a href="https://github.com/sqlfluff">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
     {% block scripts %}{% endblock %}
 </body>
+</html>

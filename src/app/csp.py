@@ -16,7 +16,7 @@ csp = {
         "pagecdn.io",
         "'unsafe-inline'",
     ],
-    "font-src": ["'none'"],
+    "font-src": ["'self'"],
     "connect-src": ["'none'"],
     "img-src": ["'self'", "data:"],
     "frame-src": ["'none'"],

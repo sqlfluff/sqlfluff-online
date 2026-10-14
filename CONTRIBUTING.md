@@ -4,11 +4,11 @@
 
 The best way to surface an bug or feature is via GitHub issues. You can even just complain, we'd love to hear it.
 
-You can also submit a PR if you'd like! If viable, your submission should include unit tests (and, um, pass them). All python code should be [black (19.10b0)](https://github.com/psf/black) formatted.
+You can also submit a PR if you'd like! If viable, your submission should include unit tests (and, um, pass them). All python code should be [black](https://github.com/psf/black) formatted.
 
 ## Developer Setup
 
-Set up a python (3.10) environment however you'd like. Install the developer requires to your python environment:
+Set up a python (3.14) environment however you'd like. Install the developer requires to your python environment:
 
 ```sh
 $ pip install -r requirements-dev.txt

@@ -1,4 +1,4 @@
-runtime: python310
+runtime: python314
 instance_class: F1
 entrypoint: python -m app.wsgi --port 8080
 automatic_scaling:

@@ -1,11 +1,13 @@
 """Tests for the application."""
 
-import app
+from unittest.mock import patch
+
 import pytest
+from bs4 import BeautifulSoup
+
+import app
 from app.config import SQL_CHAR_LIMIT
 from app.routes import sql_encode
-from bs4 import BeautifulSoup
-from unittest.mock import patch
 
 
 @pytest.fixture

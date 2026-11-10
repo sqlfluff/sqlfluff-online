@@ -1,5 +1,6 @@
 import base64
 import gzip
+import re
 
 from flask import Blueprint, abort, redirect, render_template, request, url_for
 from sqlfluff.api import fix, lint
@@ -81,6 +82,13 @@ def fluff_results():
             }
         ]
         fixed_sql = sql
+
+    # sqlfluff>=4.5 appends a long "Expected: ... Found <...>" to parser errors.
+    # lets just remove that so that things fit nicely in the UI.
+    for v in linted:
+        if v["code"] == "PRS":
+            v["description"] = re.sub(r"(?<=')\. Expected: .*", "", v["description"], flags=re.S)
+
     return render_template(
         "index.html",
         results=True,
